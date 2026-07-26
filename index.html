@@ -3,136 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIFluxo - نبض الذكاء الاصطناعي</title>
+    <title>AIFluxo | نبض الذكاء الاصطناعي</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-color: #0b0f19;
+            --card-bg: #151c2c;
+            --border-color: #2a354c;
             --accent-color: #38bdf8;
-            --text-color: #f8fafc;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
+            --badge-bg: #0284c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
+        /* Top Navbar */
         header {
             background-color: var(--card-bg);
-            padding: 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        h1 {
-            margin: 0;
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
             color: var(--accent-color);
-            font-size: 2rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        p.subtitle {
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        nav ul {
+            display: flex;
+            list-style: none;
             gap: 20px;
         }
 
-        .news-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #334155;
-            transition: transform 0.2s;
-        }
-
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .news-title {
-            font-size: 1.2rem;
-            color: var(--text-color);
-            margin-top: 0;
-        }
-
-        .news-date {
-            color: var(--accent-color);
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-        }
-
-        .read-more {
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--accent-color);
+        nav a {
+            color: var(--text-secondary);
             text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-color);
+        }
+
+        /* Breaking News Ticker */
+        .ticker-wrap {
+            background: #1e293b;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            height: 40px;
+        }
+
+        .ticker-title {
+            background: #ef4444;
+            color: white;
+            padding: 0 15px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            z-index: 2;
+        }
+
+        .ticker-text {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            padding-right: 20px;
+            white-space: nowrap;
+        }
+
+        /* Main Content Layout */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .ad-space {
+            background-color: var(--card-bg);
+            border: 1px dashed var(--border-color);
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            nav {
+                display: none;
+            }
+        }
+
+        /* Featured Big News */
+        .hero-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+
+        .hero-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .hero-body {
+            padding: 25px;
+        }
+
+        .category-badge {
+            background-color: var(--badge-bg);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 12px;
             font-weight: bold;
         }
 
-        .ad-banner {
-            background-color: #334155;
+        .hero-title {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .hero-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .hero-title a:hover {
+            color: var(--accent-color);
+        }
+
+        .meta-info {
             color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+        }
+
+        /* News Grid (Sub-articles) */
+        .sub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .sub-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sub-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .sub-card h3 a {
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .sub-card h3 a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Sidebar Styling */
+        .sidebar-section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-list {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-item a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-item a:hover {
+            color: var(--accent-color);
+        }
+
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
             text-align: center;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 8px;
-            border: 1px dashed var(--accent-color);
+            padding: 25px;
+            margin-top: 50px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>AIFluxo 🤖</h1>
-        <p class="subtitle">موقعك الأول لأحدث أخبار وتطورات الذكاء الاصطناعي لحظة بلحظة</p>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fa-solid fa-brain"></i> AIFluxo
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">الرئيسية</a></li>
+                    <li><a href="#">أخبار سريعة</a></li>
+                    <li><a href="#">أدوات الذكاء الاصطناعي</a></li>
+                    <li><a href="#">تقارير وأبحاث</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="ad-banner">مساحة إعلانية (مجهزة لـ AdSense)</div>
-
-        <main class="news-grid" id="news-container">
-            <div class="news-card">
-                <h2 class="news-title">جاري تحميل أحدث الأخبار...</h2>
-            </div>
-        </main>
-
-        <div class="ad-banner">مساحة إعلانية (مجهزة لـ AdSense)</div>
+    <div class="ticker-wrap">
+        <div class="ticker-title"><i class="fa-solid fa-bolt" style="margin-left: 5px;"></i> عاجل</div>
+        <div class="ticker-text" id="ticker-content">جاري جلب أحدث العناوين...</div>
     </div>
+
+    <div class="container">
+        <div class="ad-space">مساحة إعلانية علوية (إعلانات Google AdSense)</div>
+
+        <div class="main-layout">
+            <!-- Main Content Area -->
+            <div>
+                <!-- Featured News (Hero) -->
+                <div id="hero-container">
+                    <div class="hero-card">
+                        <div class="hero-body">
+                            <span class="category-badge">خبر بارز</span>
+                            <h2 class="hero-title">جاري تحميل أحدث التطورات...</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub News Grid -->
+                <h3 class="section-header"><i class="fa-solid fa-newspaper"></i> أحدث المقالات والأخبار</h3>
+                <div class="sub-grid" id="sub-news-container">
+                    <!-- Dynamic Sub-articles will load here -->
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside>
+                <div class="sidebar-section">
+                    <h3 class="section-header"><i class="fa-solid fa-fire"></i> الأكثر قراءة</h3>
+                    <ul class="sidebar-list" id="sidebar-news">
+                        <!-- Dynamic Sidebar Articles -->
+                    </ul>
+                </div>
+
+                <div class="ad-space" style="height: 250px; display: flex; align-items: center; justify-content: center;">
+                    مساحة إعلانية جانبية
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 AIFluxo - جميع الحقوق محفوظة | شبكة إخبارية مخصصة للذكاء الاصطناعي</p>
+    </footer>
 
     <script>
         async function loadNews() {
             try {
                 const response = await fetch('news.json');
                 const articles = await response.json();
-                const container = document.getElementById('news-container');
-                container.innerHTML = '';
+                
+                if(!articles || articles.length === 0) return;
 
-                articles.forEach(item => {
-                    const card = document.createElement('div');
-                    card.className = 'news-card';
-                    card.innerHTML = `
-                        <div class="news-date">${item.date}</div>
-                        <h2 class="news-title">${item.title}</h2>
-                        <a href="${item.link}" target="_blank" class="read-more">اقرأ الخبر كاملاً ←</a>
+                // Update Ticker
+                document.getElementById('ticker-content').innerText = articles[0].title;
+
+                // 1. Featured Hero Article
+                const hero = articles[0];
+                document.getElementById('hero-container').innerHTML = `
+                    <div class="hero-card">
+                        <div class="hero-body">
+                            <span class="category-badge">تغطية خاصة</span>
+                            <h2 class="hero-title"><a href="${hero.link}" target="_blank">${hero.title}</a></h2>
+                            <div class="meta-info">
+                                <span><i class="fa-regular fa-clock"></i> ${hero.date}</span>
+                                <span><i class="fa-solid fa-globe"></i> المصدر الرئيسي</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">اضغط على العنوان لمتابعة التفاصيل الكاملة عبر المصدر الأصلي لهذا الخبر.</p>
+                            <a href="${hero.link}" target="_blank" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">متابعة الخبر كاملًا ←</a>
+                        </div>
+                    </div>
+                `;
+
+                // 2. Sub-grid News (Articles 1 to 4)
+                const subContainer = document.getElementById('sub-news-container');
+                subContainer.innerHTML = '';
+                articles.slice(1, 5).forEach(item => {
+                    subContainer.innerHTML += `
+                        <div class="sub-card">
+                            <div>
+                                <span class="category-badge" style="background-color: #334155;">ذكاء اصطناعي</span>
+                                <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                            </div>
+                            <div class="meta-info" style="margin-top: 15px; margin-bottom: 0;">
+                                <span><i class="fa-regular fa-clock"></i> ${item.date}</span>
+                            </div>
+                        </div>
                     `;
-                    container.appendChild(card);
                 });
+
+                // 3. Sidebar News (Remaining Articles)
+                const sidebarContainer = document.getElementById('sidebar-news');
+                sidebarContainer.innerHTML = '';
+                articles.slice(5).forEach(item => {
+                    sidebarContainer.innerHTML += `
+                        <li class="sidebar-item">
+                            <a href="${item.link}" target="_blank">${item.title}</a>
+                            <div class="meta-info" style="margin-bottom:0; font-size:0.75rem;">${item.date}</div>
+                        </li>
+                    `;
+                });
+
             } catch (error) {
-                console.log('جاري إعداد الأخبار للمرة الأولى...');
+                console.log('جاري تحميل الأخبار...');
             }
         }
         loadNews();
