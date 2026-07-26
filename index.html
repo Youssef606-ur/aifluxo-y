@@ -69,10 +69,10 @@
             margin-top: 0;
         }
 
-        .news-desc {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
+        .news-date {
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
         }
 
         .read-more {
@@ -83,7 +83,6 @@
             font-weight: bold;
         }
 
-        /* مكان محدد للإعلانات مستقبلاً */
         .ad-banner {
             background-color: #334155;
             color: var(--text-secondary);
@@ -103,20 +102,40 @@
     </header>
 
     <div class="container">
-        <!-- مساحة إعلانية علوية -->
         <div class="ad-banner">مساحة إعلانية (مجهزة لـ AdSense)</div>
 
         <main class="news-grid" id="news-container">
             <div class="news-card">
-                <h2 class="news-title">جاري تحميل أحدث الأخبار التلقائية...</h2>
-                <p class="news-desc">سيتم ربط البايثون في الخطوة القادمة لسحب الأخبار أوتوماتيكياً هنا!</p>
+                <h2 class="news-title">جاري تحميل أحدث الأخبار...</h2>
             </div>
         </main>
 
-        <!-- مساحة إعلانية سفلية -->
         <div class="ad-banner">مساحة إعلانية (مجهزة لـ AdSense)</div>
     </div>
 
+    <script>
+        async function loadNews() {
+            try {
+                const response = await fetch('news.json');
+                const articles = await response.json();
+                const container = document.getElementById('news-container');
+                container.innerHTML = '';
+
+                articles.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'news-card';
+                    card.innerHTML = `
+                        <div class="news-date">${item.date}</div>
+                        <h2 class="news-title">${item.title}</h2>
+                        <a href="${item.link}" target="_blank" class="read-more">اقرأ الخبر كاملاً ←</a>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.log('جاري إعداد الأخبار للمرة الأولى...');
+            }
+        }
+        loadNews();
+    </script>
 </body>
 </html>
-
