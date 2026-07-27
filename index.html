@@ -43,7 +43,7 @@
         }
 
         nav ul { display: flex; list-style: none; gap: 20px; }
-        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; }
+        nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; cursor: pointer; transition: 0.3s; }
         nav a:hover, nav a.active { color: var(--accent-color); }
 
         .ticker-wrap {
@@ -74,16 +74,12 @@
             nav { display: none; }
         }
 
-        /* Hero Card with Image */
         .hero-card {
             background-color: var(--card-bg); border-radius: 12px;
             border: 1px solid var(--border-color); overflow: hidden; margin-bottom: 30px;
         }
 
-        .hero-img {
-            width: 100%; height: 350px; object-fit: cover; display: block;
-        }
-
+        .hero-img { width: 100%; height: 320px; object-fit: cover; display: block; }
         .hero-body { padding: 25px; }
 
         .category-badge {
@@ -97,7 +93,6 @@
 
         .meta-info { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px; display: flex; gap: 15px; }
 
-        /* Sub Cards Grid */
         .sub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
         .sub-card {
@@ -106,7 +101,7 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
 
-        .sub-img { width: 100%; height: 160px; object-fit: cover; }
+        .sub-img { width: 100%; height: 150px; object-fit: cover; }
         .sub-content { padding: 18px; }
         .sub-card h3 { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.4; }
         .sub-card h3 a { color: var(--text-primary); text-decoration: none; }
@@ -141,10 +136,10 @@
             <a href="#" class="logo"><i class="fa-solid fa-brain"></i> AIFluxo</a>
             <nav>
                 <ul>
-                    <li><a href="#" class="active">الرئيسية</a></li>
-                    <li><a href="#">أخبار سريعة</a></li>
-                    <li><a href="#">أدوات الذكاء الاصطناعي</a></li>
-                    <li><a href="#">تقارير وأبحاث</a></li>
+                    <li><a onclick="filterNews('all')" class="active">الرئيسية</a></li>
+                    <li><a onclick="filterNews('openai')">أخبار OpenAI</a></li>
+                    <li><a onclick="filterNews('google')">جوجل والتقنية</a></li>
+                    <li><a onclick="filterNews('tech')">تطبيقات وأدوات</a></li>
                 </ul>
             </nav>
         </div>
@@ -156,19 +151,11 @@
     </div>
 
     <div class="container">
-        <div class="ad-space">مساحة إعلانية علوية (إعلانات Google AdSense)</div>
+        <div class="ad-space">مساحة إعلانية علوية (Google AdSense)</div>
 
         <div class="main-layout">
             <div>
-                <!-- Hero Article -->
-                <div id="hero-container">
-                    <div class="hero-card">
-                        <div class="hero-body">
-                            <span class="category-badge">تغطية خاصة</span>
-                            <h2 class="hero-title">جاري تحميل الأخبار والصور...</h2>
-                        </div>
-                    </div>
-                </div>
+                <div id="hero-container"></div>
 
                 <h3 class="section-header"><i class="fa-solid fa-newspaper"></i> أحدث المقالات والأخبار</h3>
                 <div class="sub-grid" id="sub-news-container"></div>
@@ -187,67 +174,93 @@
     </div>
 
     <footer>
-        <p>© 2026 AIFluxo - جميع الحقوق محفوظة | شبكة إخبارية مخصصة للذكاء الاصطناعي</p>
+        <p>© 2026 AIFluxo - جميع الحقوق محفوظة | منصة أخبار الذكاء الاصطناعي</p>
     </footer>
 
     <script>
+        let allArticles = [];
+
         async function loadNews() {
             try {
                 const response = await fetch('news.json');
-                const articles = await response.json();
+                allArticles = await response.json();
                 
-                if(!articles || articles.length === 0) return;
+                if(!allArticles || allArticles.length === 0) return;
 
-                document.getElementById('ticker-content').innerText = articles[0].title;
+                document.getElementById('ticker-content').innerText = allArticles[0].title;
+                displayArticles(allArticles);
 
-                const hero = articles[0];
-                document.getElementById('hero-container').innerHTML = `
-                    <div class="hero-card">
-                        <img src="${hero.image}" class="hero-img" alt="Hero Image" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&q=80'">
-                        <div class="hero-body">
-                            <span class="category-badge">تغطية خاصة</span>
-                            <h2 class="hero-title"><a href="${hero.link}" target="_blank">${hero.title}</a></h2>
-                            <div class="meta-info">
-                                <span><i class="fa-regular fa-clock"></i> ${hero.date}</span>
-                                <span><i class="fa-solid fa-globe"></i> المصدر الرئيسي</span>
+            } catch (error) {
+                console.log('خطأ في التحميل');
+            }
+        }
+
+        function displayArticles(articles) {
+            if(articles.length === 0) return;
+
+            // Hero Article
+            const hero = articles[0];
+            document.getElementById('hero-container').innerHTML = `
+                <div class="hero-card">
+                    <img src="${hero.image}" class="hero-img" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&q=80'">
+                    <div class="hero-body">
+                        <span class="category-badge">تغطية خاصة</span>
+                        <h2 class="hero-title"><a href="${hero.link}" target="_blank">${hero.title}</a></h2>
+                        <div class="meta-info">
+                            <span><i class="fa-regular fa-clock"></i> ${hero.date}</span>
+                            <span><i class="fa-solid fa-globe"></i> المصدر الرسمي</span>
+                        </div>
+                        <a href="${hero.link}" target="_blank" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">متابعة الخبر كاملًا ←</a>
+                    </div>
+                </div>
+            `;
+
+            // Sub Grid
+            const subContainer = document.getElementById('sub-news-container');
+            subContainer.innerHTML = '';
+            articles.slice(1, 5).forEach(item => {
+                subContainer.innerHTML += `
+                    <div class="sub-card">
+                        <img src="${item.image}" class="sub-img" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&q=80'">
+                        <div class="sub-content">
+                            <span class="category-badge" style="background-color: #334155;">ذكاء اصطناعي</span>
+                            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                            <div class="meta-info" style="margin-top: 10px; margin-bottom: 0; font-size: 0.75rem;">
+                                <span><i class="fa-regular fa-clock"></i> ${item.date}</span>
                             </div>
-                            <a href="${hero.link}" target="_blank" style="color: var(--accent-color); font-weight: bold; text-decoration: none;">متابعة الخبر كاملًا ←</a>
                         </div>
                     </div>
                 `;
+            });
 
-                const subContainer = document.getElementById('sub-news-container');
-                subContainer.innerHTML = '';
-                articles.slice(1, 5).forEach(item => {
-                    subContainer.innerHTML += `
-                        <div class="sub-card">
-                            <img src="${item.image}" class="sub-img" alt="Article Image" onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&q=80'">
-                            <div class="sub-content">
-                                <span class="category-badge" style="background-color: #334155;">ذكاء اصطناعي</span>
-                                <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
-                                <div class="meta-info" style="margin-top: 10px; margin-bottom: 0; font-size: 0.75rem;">
-                                    <span><i class="fa-regular fa-clock"></i> ${item.date}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+            // Sidebar
+            const sidebarContainer = document.getElementById('sidebar-news');
+            sidebarContainer.innerHTML = '';
+            articles.slice(5).forEach(item => {
+                sidebarContainer.innerHTML += `
+                    <li class="sidebar-item">
+                        <a href="${item.link}" target="_blank">${item.title}</a>
+                        <div class="meta-info" style="margin-bottom:0; font-size:0.75rem;">${item.date}</div>
+                    </li>
+                `;
+            });
+        }
 
-                const sidebarContainer = document.getElementById('sidebar-news');
-                sidebarContainer.innerHTML = '';
-                articles.slice(5).forEach(item => {
-                    sidebarContainer.innerHTML += `
-                        <li class="sidebar-item">
-                            <a href="${item.link}" target="_blank">${item.title}</a>
-                            <div class="meta-info" style="margin-bottom:0; font-size:0.75rem;">${item.date}</div>
-                        </li>
-                    `;
-                });
+        function filterNews(category) {
+            // تحديث تصميم الزرار النشط
+            document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
 
-            } catch (error) {
-                console.log('جاري تحميل الأخبار...');
+            if(category === 'all') {
+                displayArticles(allArticles);
+            } else {
+                // فلترة الأخبار بناءً على الكلمة المفتاحية في العنوان
+                let filtered = allArticles.filter(item => item.title.toLowerCase().includes(category));
+                if(filtered.length === 0) filtered = allArticles; // لو مفيش يعرض الكل احتياطياً
+                displayArticles(filtered);
             }
         }
+
         loadNews();
     </script>
 </body>
