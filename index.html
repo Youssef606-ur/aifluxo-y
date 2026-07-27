@@ -34,7 +34,7 @@
         .header-container {
             max-width: 1200px; margin: 0 auto;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px;
+            padding: 12px 20px; gap: 15px; flex-wrap: wrap;
         }
 
         .logo {
@@ -45,6 +45,39 @@
         nav ul { display: flex; list-style: none; gap: 20px; }
         nav a { color: var(--text-secondary); text-decoration: none; font-weight: 500; cursor: pointer; transition: 0.3s; }
         nav a:hover, nav a.active { color: var(--accent-color); }
+
+        /* Search Box Styling */
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box input {
+            background-color: #0b0f19;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 35px 8px 15px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 180px;
+        }
+
+        .search-box input:focus {
+            width: 240px;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 12px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
 
         .ticker-wrap {
             background: #1e293b; border-bottom: 1px solid var(--border-color);
@@ -72,6 +105,8 @@
         @media (max-width: 768px) {
             .main-layout { grid-template-columns: 1fr; }
             nav { display: none; }
+            .search-box input { width: 140px; }
+            .search-box input:focus { width: 180px; }
         }
 
         .hero-card {
@@ -123,6 +158,15 @@
         .sidebar-item a { color: var(--text-primary); text-decoration: none; font-size: 0.95rem; font-weight: 500; display: block; margin-bottom: 5px; }
         .sidebar-item a:hover { color: var(--accent-color); }
 
+        .no-results {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
         footer {
             background-color: var(--card-bg); border-top: 1px solid var(--border-color);
             text-align: center; padding: 25px; margin-top: 50px; color: var(--text-secondary); font-size: 0.9rem;
@@ -142,6 +186,10 @@
                     <li><a onclick="filterNews('tech')">تطبيقات وأدوات</a></li>
                 </ul>
             </nav>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="searchArticles()" placeholder="ابحث عن خبر...">
+            </div>
         </div>
     </header>
 
@@ -157,7 +205,7 @@
             <div>
                 <div id="hero-container"></div>
 
-                <h3 class="section-header"><i class="fa-solid fa-newspaper"></i> أحدث المقالات والأخبار</h3>
+                <h3 class="section-header" id="section-title"><i class="fa-solid fa-newspaper"></i> أحدث المقالات والأخبار</h3>
                 <div class="sub-grid" id="sub-news-container"></div>
             </div>
 
@@ -196,7 +244,16 @@
         }
 
         function displayArticles(articles) {
-            if(articles.length === 0) return;
+            if(!articles || articles.length === 0) {
+                document.getElementById('hero-container').innerHTML = '';
+                document.getElementById('sub-news-container').innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 2rem; margin-bottom: 10px; color: var(--accent-color);"></i>
+                        <p>لم نجد أي أخبار تطابق البحث، جرب كلمة أخرى.</p>
+                    </div>
+                `;
+                return;
+            }
 
             // Hero Article
             const hero = articles[0];
@@ -247,18 +304,26 @@
         }
 
         function filterNews(category) {
-            // تحديث تصميم الزرار النشط
             document.querySelectorAll('nav a').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
+            document.getElementById('searchInput').value = '';
 
             if(category === 'all') {
                 displayArticles(allArticles);
             } else {
-                // فلترة الأخبار بناءً على الكلمة المفتاحية في العنوان
                 let filtered = allArticles.filter(item => item.title.toLowerCase().includes(category));
-                if(filtered.length === 0) filtered = allArticles; // لو مفيش يعرض الكل احتياطياً
                 displayArticles(filtered);
             }
+        }
+
+        function searchArticles() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if(query === '') {
+                displayArticles(allArticles);
+                return;
+            }
+            const filtered = allArticles.filter(item => item.title.toLowerCase().includes(query));
+            displayArticles(filtered);
         }
 
         loadNews();
